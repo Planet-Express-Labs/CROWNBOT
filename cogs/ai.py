@@ -15,10 +15,10 @@ def trim(input, max, min):
 
 
 class Ai(commands.Cog):
-    
+
     def __init__(self, bot):
         self.bot = bot
-    
+
     @slash_commands.command(name='summarize',
                             description='Summarizes input text into something shorter using Facebook BartCNN',
                             testing_guilds=guilds,
@@ -62,7 +62,7 @@ class Ai(commands.Cog):
         out = str(await nlp.summarize(text))
         #   , min_length, max_length, repetition_penalty=repetition_penalty, temperature=temperature
         await ctx.edit(out)
-    
+
     @slash_commands.command(name="expand_text",
                             description="Uses the GPT2 model to write text from a shorter piece of text.",
                             testing_guilds=guilds,

@@ -1,12 +1,10 @@
-import discord
-
 from io import BytesIO
-from discord.ext import commands
-from dislash import *
 
-from cogs.data import NLP
-from bot import bot
+from discord.ext import commands
+
 from CROWNBOT.paginate import *
+from bot import bot
+from cogs.data import NLP
 
 
 async def summarize_text(text):

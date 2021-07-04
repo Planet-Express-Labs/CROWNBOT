@@ -7,8 +7,8 @@ from io import BytesIO
 
 from discord.ext import commands
 
-from cogs.data.confess_db import *
 from CROWNBOT.localization import get_string
+from cogs.data.confess_db import *
 
 __version__ = '0.1 PRERELEASE'
 

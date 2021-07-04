@@ -34,11 +34,11 @@ class Roles(commands.Cog):
                 options = []
             options.append(SelectOption(role.name, role.id))
         menus.append(
-                    SelectMenu(
-                        custom_id=f"Roles{index}",
-                        placeholder="Pick roles.",
-                        options=options
-                    ))
+            SelectMenu(
+                custom_id=f"Roles{index}",
+                placeholder="Pick roles.",
+                options=options
+            ))
         print(menus)
         await ctx.send(
             "testing_menu",

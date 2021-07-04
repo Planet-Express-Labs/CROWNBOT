@@ -4,10 +4,11 @@
 # this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 
+from base64 import b64decode
+
 import discord
 from discord.ext import commands
 from dislash import *
-from base64 import b64decode
 
 from CROWNBOT.config import *
 from CROWNBOT.localization import get_string

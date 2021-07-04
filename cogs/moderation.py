@@ -7,8 +7,8 @@ from discord.ext import commands
 from discord.ext.commands import Context
 from dislash import slash_commands, Option, Type, Interaction
 
-from bot import guilds
 from CROWNBOT import localization
+from bot import guilds
 
 
 class Moderation(commands.Cog):

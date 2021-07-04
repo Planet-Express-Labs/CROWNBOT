@@ -4,8 +4,8 @@ import discord
 from discord.ext import commands
 from dislash import *
 
-from bot import guilds
 from CROWNBOT.paginate import Element
+from bot import guilds
 
 
 async def create_menu(ctx: SlashInteraction, menu):
@@ -79,64 +79,65 @@ async def create_menu(ctx: SlashInteraction, menu):
 
 
 class Help(commands.Cog):
-    
+
     def __init__(self, bot):
         self.bot = bot
 
     @slash_commands.command(name='music-help',
-                            description='Provides information on how to use the music commands. ', 
+                            description='Provides information on how to use the music commands. ',
                             testing_guilds=guilds)
-    async def cmd_music_help(self, ctx:SlashInteraction):
+    async def cmd_music_help(self, ctx: SlashInteraction):
         menu = Element(
-        header="Music commands",
-        long_desc="Navigate through all the entries",
-        elements=[
-            Element(
-                header="/connect <channel, current channel if None>",
-                long_desc="Connects the bot to a channel and creates a player.\n"
-                "This command is automatically executed if you are not in a channel."
-            ),
-            Element(
-                header="/play <song>",
-                long_desc="Starts playing a song in the currently connected channel.\n"
-                "If you are not in a channel, it will automatically connect.\n\n"
-                "This command supports playing from youtube, bandcamp, soundcloud, twitch, vimeo and direct http streams."
-            ),
-            Element(
-                header="/pause",
-                long_desc="Pauses playback. "
-            ),
-            Element(
-                header="/resume",
-                long_desc="Resumes playback. "
-            ),
-            Element(
-                header="/skip",
-                long_desc="Skips the currently playing song. "
-            ),
-            Element(
-                header="/volume",
-                long_desc="Sets the volume of the player. "
-            ),
-            Element(
-                header="/now_playing",
-                long_desc="Displays the currently playing song. "
-            ),
-            Element(
-                header="/queue",
-                long_desc="Displays the queue of the player. "
-            ),
-            Element(
-                header="/stop",
-                long_desc="Stops playback. "
-            ),
-            Element(
-                header="/nodes",
-                long_desc="Displays information about the connected nodes. "
-            )
+            header="Music commands",
+            long_desc="Navigate through all the entries",
+            elements=[
+                Element(
+                    header="/connect <channel, current channel if None>",
+                    long_desc="Connects the bot to a channel and creates a player.\n"
+                              "This command is automatically executed if you are not in a channel."
+                ),
+                Element(
+                    header="/play <song>",
+                    long_desc="Starts playing a song in the currently connected channel.\n"
+                              "If you are not in a channel, it will automatically connect.\n\n"
+                              "This command supports playing from youtube, bandcamp, soundcloud, twitch, vimeo and direct http streams."
+                ),
+                Element(
+                    header="/pause",
+                    long_desc="Pauses playback. "
+                ),
+                Element(
+                    header="/resume",
+                    long_desc="Resumes playback. "
+                ),
+                Element(
+                    header="/skip",
+                    long_desc="Skips the currently playing song. "
+                ),
+                Element(
+                    header="/volume",
+                    long_desc="Sets the volume of the player. "
+                ),
+                Element(
+                    header="/now_playing",
+                    long_desc="Displays the currently playing song. "
+                ),
+                Element(
+                    header="/queue",
+                    long_desc="Displays the queue of the player. "
+                ),
+                Element(
+                    header="/stop",
+                    long_desc="Stops playback. "
+                ),
+                Element(
+                    header="/nodes",
+                    long_desc="Displays information about the connected nodes. "
+                )
             ]
         )
         create_menu(ctx, menu)
+
 
 def setup(bot):
     bot.add_cog(Help(bot))

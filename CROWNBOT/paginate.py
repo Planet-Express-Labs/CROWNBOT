@@ -1,9 +1,25 @@
-from dislash import *
 import discord
+from dislash import *
+
 
 # Stolen, with permission from the dislash.py example bot:
 # https://github.com/EQUENOS/slash-commands-example-bot/blob/main/pagination.py
 # Many thanks to EQUENOS.
+
+class SelectMenuPaginate:
+    def __init__(self, elements: list, max_elements = 23):
+        self.elements = elements
+        self.max_elements = max_elements
+        assert max_elements < 24
+
+    def pages(self):
+        pages = []
+        page = []
+        for ind, each in enumerate(self.elements):
+            if ind == self.max_elements:
+                pages.append(page)
+            page.append(each)
+        return pages
 
 
 class Element:
@@ -52,6 +68,7 @@ class Element:
         return content.strip()
 
 
+# TODO: Convert to something more pythonic.
 def paginator(text, max_length):
     temp = ''
     final = []
@@ -66,10 +83,10 @@ def paginator(text, max_length):
     return final
 
 
-def increment_page(page, index):
+def increment_page(page, ind):
     page_length = len(page)
-    if index + 1 > page_length:
-        return index + 1
+    if ind + 1 > page_length:
+        return ind + 1
     return 0
 
 
@@ -83,7 +100,7 @@ def decrement_page(page, index):
 index = 0
 
 
-async def paginate(text, channel, inter, ephemeral=False):
+async def paginate(text, inter, ephemeral=False):
     pages = paginator(text, 4000)
     elements = []
     for each, index in enumerate(pages):

@@ -8,11 +8,9 @@
 # import json
 # import requests
 import asyncio
-import aiohttp
 import json
 
 import requests
-import ujson
 
 from CROWNBOT.config import HF_API_KEY
 
