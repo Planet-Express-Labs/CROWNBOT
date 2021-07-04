@@ -1,0 +1,12 @@
+discord.py
+asyncio
+configparser
+SQLAlchemy
+dislash.py
+wavelink
+art
+aiohttp
+git+git://github.com/Rapptz/discord-ext-menus
+humanize
+requests
+ujson
