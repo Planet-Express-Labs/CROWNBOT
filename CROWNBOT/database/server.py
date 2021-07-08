@@ -1,11 +1,9 @@
 # This software is provided free of charge without a warranty.
 # This Source Code Form is subject to the terms of the
-# Mozilla Public License, v. 2.0. If a copy of the MPL was 
+# Mozilla Public License, v. 2.0. If a copy of the MPL was
 # this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 from sqlalchemy import Column, String, Integer
-
-from CROWNBOT.database import database
-from sessions import Base
+from sessions import *
 
 
 class Server(Base):
@@ -31,16 +29,3 @@ class Server(Base):
         self.auto_delete = auto_delete
         self.premium = premium
         self.official_guild = official_guild
-
-
-def get_server():
-    session = database.make_sessions()
-    server = session.query(Server)
-    session.close()
-    return server.all()
-
-
-def initialize_server(guild, enabled_modules, admin_role, mod_role, auto_delete, premium):
-    session = database.make_sessions()
-    server = Server(guild, enabled_modules, admin_role, mod_role, None, auto_delete, premium, False)
-    database.close_session(session, server)

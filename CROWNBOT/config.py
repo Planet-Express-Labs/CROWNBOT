@@ -37,6 +37,7 @@ if not os.path.exists(os.getcwd() + "\\data\\config.ini"):
     if TEST_GUILDS is not None:
         TEST_GUILDS = TEST_GUILDS.split(",")
     HF_API_KEY = os.getenv("zoidberg_huggingface")
+    DATABASE = os.getenv("zoidberg_db")
 else:
     CONFIG_FILE = os.getcwd() + "\\data\\config.ini"
     config = configparser.ConfigParser()
@@ -54,6 +55,7 @@ else:
     BOT_TOKEN = config.get("Bot", "bot_token")
 
     LOGGING_LEVEL = config.get("Bot", "logging_level")
+
     DEV_ID = config.get("Users", "developer_id")
     ADMIN_ID = config.get("Users", "admin_ids").split(" ")
 

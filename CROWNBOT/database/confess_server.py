@@ -11,8 +11,7 @@
 # This is designed to be used with Zoidberg bot, however I'm sure it could be adapted to work with your own projects.
 # If there is an issue that might cause issue on your own bot, feel free to pull request if it will improve something.<3
 from sqlalchemy import Column, Integer
-
-from sessions import Base
+from sessions import *
 
 
 class ConfessServer(Base):
@@ -22,4 +21,10 @@ class ConfessServer(Base):
     confess_channel = Column(Integer)
     log_channel = Column(Integer)
 
+
+def get_confess_server():
+    session = make_sessions()
+    confess_server = session.query(ConfessServer)
+    session.close()
+    return confess_server.all()
 
