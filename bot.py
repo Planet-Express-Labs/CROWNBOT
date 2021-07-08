@@ -16,7 +16,7 @@ from CROWNBOT.localization import get_string
 __version__ = get_string("VERSION")
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
-activity = discord.Activity(name='zoidberg.pexl.pw', type=discord.ActivityType.playing)
+activity = discord.Activity(name='The new kpop Discord bot | 새로운 케이팝 Discord 봇.', type=discord.ActivityType.playing)
 
 bot = commands.Bot(
     command_prefix='-=',
