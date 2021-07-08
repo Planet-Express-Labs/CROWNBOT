@@ -97,7 +97,8 @@ async def cmd_invite(ctx):
     embed = discord.Embed(
         description="Invite CROWNBOT into your server. ",
         title="Zoidberg",
-        url="https://discord.com/api/oauth2/authorize?client_id=861072309427372032&permissions=8&scope=applications.commands%20bot")
+        url="https://discord.com/api/oauth2/authorize?client_id=861072309427372032&permissions=8&scope=bot%20"
+            "applications.commands")
     embed.set_author(name="Zoidberg v" + __version__,
                      icon_url="https://i.imgur.com/wWa4zCM.png",
                      url="https://github.com/LiemEldert/ZoidbergBot")
