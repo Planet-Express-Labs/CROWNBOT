@@ -11,3 +11,4 @@ humanize~=3.9.0
 requests~=2.25.1
 ujson
 Weverse~=1.0.2
+psycopg2
