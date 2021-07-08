@@ -1,4 +1,5 @@
 import os
+import ast
 
 from CROWNBOT.config import MissingEnvironmentVariableError
 
@@ -44,4 +45,4 @@ from CROWNBOT.config import MissingEnvironmentVariableError
 #
 # }
 
-nodes = dict(os.getenv("zoidberg_full_nodes"))
+nodes = ast.literal_eval(os.getenv("zoidberg_full_nodes"))
