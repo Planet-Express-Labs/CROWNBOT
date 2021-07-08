@@ -44,4 +44,4 @@ from CROWNBOT.config import MissingEnvironmentVariableError
 #
 # }
 
-nodes = dict(os.getenv("zoidberg_full_nodes"))
+nodes = os.getenv("zoidberg_full_nodes")
