@@ -217,7 +217,7 @@ class Music(commands.Cog):
             embed = create_song_embed(player, track)
             await ctx.edit(embed=embed)
         else:
-            await ctx.reply(type=7)
+            await ctx.reply("Queued " + track.title)
         await controller.queue.put(track)
 
     @slash_commands.command(name='pause',
