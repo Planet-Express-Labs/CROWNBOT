@@ -1,5 +1,4 @@
 from discord.ext import commands
-from discord.ext.commands.errors import ConversionError
 from dislash import SlashInteraction, slash_commands, Type, Option
 
 from bot import guilds
@@ -40,7 +39,7 @@ class Ai(commands.Cog):
             # convert the values into floats since discord does not seem to support them.
             try:
                 temperature = float(repetition_penalty)
-            except ConversionError:
+            except TypeError:
                 await ctx.reply("The repetition_penalty and temperature must be floats. ")
             # Cut the values down if they are too large.
             temperature = trim(temperature, 100, 0)
@@ -49,7 +48,7 @@ class Ai(commands.Cog):
         if repetition_penalty is not None:
             try:
                 repetition_penalty = float(repetition_penalty)
-            except ConversionError:
+            except TypeError:
                 await ctx.create_response("The repetition_penalty and temperature must be floats. ")
             repetition_penalty = trim(repetition_penalty, 100, 0)
         await ctx.reply(type=5)
