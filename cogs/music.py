@@ -213,9 +213,11 @@ class Music(commands.Cog):
         track = tracks[0]
         controller = self.get_controller(ctx)
 
-        if not player.current:
+        if player.current:
             embed = create_song_embed(player, track)
             await ctx.edit(embed=embed)
+        else:
+            await ctx.reply()
         await controller.queue.put(track)
 
     @slash_commands.command(name='pause',
