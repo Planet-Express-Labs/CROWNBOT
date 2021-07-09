@@ -6,6 +6,11 @@ from sqlalchemy import Column, String, Integer
 from CROWNBOT.database.sessions import *
 
 
+def save(data):
+    session = make_sessions()
+    save_session(data, session)
+
+
 class Weverse(Base):
     __tablename__ = 'weverse_subscriptions'
 

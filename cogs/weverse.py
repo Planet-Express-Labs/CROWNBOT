@@ -24,14 +24,15 @@ class Weverse(commands.Cog):
     @slash_commands.command(name="subscribe_weverse",
                             description="Sends a message when a subscribed artist does something on Weverse. ",
                             options=[
-                                Option("channel", "Where to send subscribed comments"),
-                                Option("subscriptions", "Which groups to subscribe to, separate each with a comma.")
+                                Option("channel", "Where to send subscribed comments", Type.CHANNEL),
+                                Option("subscriptions", "Which groups to subscribe to, separate each with a comma.",
+                                       Type.STRING, required=False)
                             ])
     async def cmd_subscribe(self, ctx):
         channel = ctx.get("channel")
-        subscriptions = ctx.get("subscriptions")
-
-
+        subscriptions = ctx.get("subscriptions").split(",")
+        db = weverse.Weverse(ctx.guild, channel, subscriptions)
+        weverse.save(db)
 
 
 async def setup(bot):
