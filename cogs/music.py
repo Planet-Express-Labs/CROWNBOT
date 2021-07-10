@@ -217,7 +217,7 @@ class Music(commands.Cog):
             embed = create_song_embed(player, track)
             await ctx.edit(embed=embed)
         else:
-            await ctx.reply("Queued " + track.title)
+            await ctx.edit("Queued " + track.title)
         await controller.queue.put(track)
 
     @slash_commands.command(name='pause',
@@ -228,9 +228,9 @@ class Music(commands.Cog):
         """Pauses the song."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
         if not player.is_playing:
-            return await ctx.send('I am not currently playing anything!')
+            return await ctx.reply('I am not currently playing anything!')
 
-        await ctx.send('Pausing the song!')
+        await ctx.reply('Pausing the song!')
         await player.set_pause(True)
 
     @slash_commands.command(name="resume",
@@ -241,9 +241,9 @@ class Music(commands.Cog):
         """Resumes the song if pauced. ."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
         if not player.paused:
-            return await ctx.send('The song is not currently paused!')
+            return await ctx.reply('The song is not currently paused!')
 
-        await ctx.send('Resumed. ')
+        await ctx.reply('Resumed. ')
         await player.set_pause(False)
 
     @slash_commands.command(name='skip',

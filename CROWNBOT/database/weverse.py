@@ -3,6 +3,9 @@
 # Mozilla Public License, v. 2.0. If a copy of the MPL was
 # this file, You can obtain one at https://mozilla.org/MPL/2.0/.
 from sqlalchemy import Column, String, Integer
+
+from tortoise import Tortoise, run_async
+
 from CROWNBOT.database.sessions import *
 
 
