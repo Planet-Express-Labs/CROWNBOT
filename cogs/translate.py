@@ -27,8 +27,8 @@ class Translate(commands.Cog):
                             guild_ids=guilds,
                             description="Translates text to a target language.",
                             options=[
-                                Option.String("text", "The text that you want to translate.", Type.STRING),
-                                Option.String("language", "The language that you want to translate to.", Type.STRING)
+                                Option.String("text", "The text that you want to translate.", type=Type.STRING),
+                                Option.String("language", "The language that you want to translate to.", type=Type.STRING)
                             ])
     async def translate(self, ctx):
         """Translates text to a target language.
