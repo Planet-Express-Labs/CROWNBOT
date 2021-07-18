@@ -13,3 +13,5 @@ ujson
 Weverse
 psycopg2
 pycountry
+six
+google-cloud-translate

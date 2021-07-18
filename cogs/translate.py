@@ -45,5 +45,6 @@ class Translate(commands.Cog):
         translated = translate_text_target(target, text)
         await ctx.edit(translated)
 
+
 def setup(bot):
     bot.add_cog(Translate(bot))
