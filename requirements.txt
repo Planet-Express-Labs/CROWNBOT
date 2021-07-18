@@ -4,7 +4,7 @@ configparser
 SQLAlchemy
 dislash.py
 wavelink
-art~=5.2
+art
 aiohttp
 git+git://github.com/Rapptz/discord-ext-menus
 humanize
@@ -12,3 +12,4 @@ requests
 ujson
 Weverse
 psycopg2
+pycountry
