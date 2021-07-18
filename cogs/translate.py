@@ -23,7 +23,7 @@ class Translate(commands.Cog):
         self.bot = bot
 
 
-    @slash_command.command(name="translate_to",
+    @slash_commands.command(name="translate_to",
                             guild_ids=guilds,
                             description="Translates text to a target language.",
                             options=[
