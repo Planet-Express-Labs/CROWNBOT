@@ -27,7 +27,7 @@ slash = SlashClient(bot, show_warnings=True)
 # TODO: Move both of these into the config file.
 guilds = TEST_GUILDS
 
-blocked_cogs = []
+blocked_cogs = ['confess.py', 'log.py', 'schedule.py', 'weverse.py']
 failed_cogs = []
 
 for filename in os.listdir("cogs"):
