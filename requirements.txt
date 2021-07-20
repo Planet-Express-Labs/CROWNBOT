@@ -14,5 +14,5 @@ Weverse
 psycopg2
 pycountry
 six
-google-cloud-translate
-tortoise
+google-cloud-translate>=3.0.0
+tortoise-orm
