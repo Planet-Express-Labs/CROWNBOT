@@ -13,6 +13,8 @@ from dislash import *
 from CROWNBOT.config import *
 from CROWNBOT.localization import get_string
 
+from tortoise import Tortoise, run_async
+
 __version__ = get_string("VERSION")
 logging.basicConfig(level=logging.INFO)
 log = logging.getLogger(__name__)
@@ -38,9 +40,26 @@ for filename in os.listdir("cogs"):
             failed_cogs += filename
 
 
+async def init():
+    # Here we create a SQLite DB using file "db.sqlite3"
+    #  also specify the app name of "models"
+    #  which contain models from "app.models"
+    await Tortoise.init(
+        db_url=DATABASE,
+        modules={'models': ['CROWNBOT.database.filter_db']}
+    )
+
+    # Generate the schema, only run on new
+    # if bool(os.getenv("zoidberg_first_run")):
+    await Tortoise.generate_schemas()
+# run_async is a helper function to run simple async Tortoise scripts.
+run_async(init())
+
+
 @bot.event
 async def on_ready():
     print(f"Bot is ready: logged in as {bot.user.name} ({bot.user.id})")
+    await init()
     await bot.wait_until_ready()
 
 

@@ -19,3 +19,4 @@ bans.csv
 cogs/lavalink/logs/spring.log
 cogs/data/music_nodes.py
 gcloud.json
+*.sqlite3
