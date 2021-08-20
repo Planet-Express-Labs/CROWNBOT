@@ -3,7 +3,7 @@
 
 # Install
 
-Hosted CROWNBOT is running on the Azure Ubuntu:latest image. We have a test environment running on Heroku and our
+Hosted CROWNBOT is not running on the Azure Ubuntu:latest image. We have a ~~test~~ temporary production environment running on Heroku and our
 deveopers mostly use Windows. There should not be issues with running on different platforms, however we recomend you
 follow our environment as close as possible.
 
