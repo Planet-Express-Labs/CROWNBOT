@@ -23,7 +23,7 @@ from typing import Union
 import discord
 import wavelink
 from discord.ext import commands
-from dislash import slash_commands, Option, Type, Interaction
+from dislash import *
 from humanize import naturalsize
 
 from bot import guilds
@@ -88,7 +88,7 @@ def convert_time(time):
     return minutes, seconds
 
 
-def create_song_embed(player: wavelink.Player, song=None):
+def create_song_embed(player: wavelink.Player, song=None, now_playing=False):
     if song is None:
         song = player.current
     minutes, seconds = convert_time(song.duration)
@@ -97,6 +97,45 @@ def create_song_embed(player: wavelink.Player, song=None):
         description=f"Length: {minutes}:{seconds}",
         url=song.uri
     )
+    if now_playing:
+        embed = discord.Embed(
+            title="Now playing: " + song.title,
+            description=f"Length: {minutes}:{seconds}",
+            url=song.uri
+        )
+        embed.set_image(url=song.thumb)
+        embed.set_author(name=f"Uploaded by: {song.author}")
+
+        buttons = ActionRow(
+                Button(
+                    style=ButtonStyle.blurple,
+                    label="<- 10s",
+                    custom_id="-10s"
+                ),
+                Button(
+                    style=ButtonStyle.blurple,
+                    label="<- 5s",
+                    custom_id="-5s"
+                ),
+                Button( 
+                    style=ButtonStyle.blurple,
+                    label="5s ->",
+                    custom_id="5s"
+                ),
+                Button(
+                    style=ButtonStyle.blurple,
+                    label="10s ->",
+                    custom_id="10s"
+                )
+            )
+
+        return embed, buttons
+    else:
+        embed = discord.Embed(
+            title=song.title,
+            description=f"Length: {minutes}:{seconds}",
+            url=song.uri
+        )
     embed.set_image(url=song.thumb)
     embed.set_author(name=f"Uploaded by: {song.author}")
     return embed
