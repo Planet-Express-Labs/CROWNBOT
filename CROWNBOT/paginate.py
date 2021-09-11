@@ -1,25 +1,72 @@
-import discord
 from dislash import *
+import discord
+import textwrap
 
 
 # Stolen, with permission from the dislash.py example bot:
 # https://github.com/EQUENOS/slash-commands-example-bot/blob/main/pagination.py
 # Many thanks to EQUENOS.
 
-class SelectMenuPaginate:
-    def __init__(self, elements: list, max_elements = 23):
-        self.elements = elements
-        self.max_elements = max_elements
-        assert max_elements < 24
 
-    def pages(self):
-        pages = []
-        page = []
-        for ind, each in enumerate(self.elements):
-            if ind == self.max_elements:
-                pages.append(page)
-            page.append(each)
-        return pages
+async def progress_bar(iteration, total, prefix='', suffix='', decimals=1, length=100, fill='█'):
+    """
+    Call in a loop to create terminal progress bar
+    @params:
+        iteration   - Required  : current iteration (Int)
+        total       - Required  : total iterations (Int)
+        prefix      - Optional  : prefix string (Str)
+        suffix      - Optional  : suffix string (Str)
+        decimals    - Optional  : positive number of decimals in percent complete (Int)
+        length      - Optional  : character length of bar (Int)
+        fill        - Optional  : bar fill character (Str)
+        printEnd    - Optional  : end character (e.g. "\r", "\r\n") (Str)
+    """
+    percent = ("{0:." + str(decimals) + "f}").format(100 * (iteration / float(total)))
+    filledLength = int(length * iteration // total)
+    bar = fill * filledLength + '-' * (length - filledLength)
+    return f'\r{prefix} |{bar}| {percent}% {suffix}'
+
+
+class Menu:
+    def __init__(self):
+        self.pages = []
+
+    def add_page(self, name, description, type):
+        if type == "int":
+            buttons = ActionRow(
+                Button(
+                    style=ButtonStyle.green,
+                    label="+",
+                    custom_id="add"
+                ),
+                Button(
+                    style=ButtonStyle.red,
+                    label="-",
+                    custom_id="sub"
+                )
+            )
+
+        self.pages.update({"name": name, "buttons": buttons, "description": description})
+
+    async def send_pages(self, ctx):
+        buttons = []
+        for page in self.pages:
+            buttons.append(page["buttons"])
+
+        rows = auto_rows(*buttons)
+        msg = await ctx.send(content=rows)
+        on_click = msg.create_click_listener(timeout=60)
+
+        @on_click.not_from_user(ctx.author, cancel_others=True, reset_timeout=False)
+        async def on_wrong_user(inter):
+            # Reply with a hidden message
+            await inter.reply(
+                "This command's buttons can only be used by the person who originally sent it for security reasons.",
+                ephemeral=True)
+
+        @on_click.matching_id("test_button")
+        async def on_test_button(ctx):
+            await ctx.reply("You've clicked the button!")
 
 
 class Element:
@@ -68,44 +115,18 @@ class Element:
         return content.strip()
 
 
-# TODO: Convert to something more pythonic.
 def paginator(text, max_length):
-    temp = ''
-    final = []
+    # too lazy to actually fix
+    return textwrap.wrap(text, max_length)
+
+
+async def paginate(text, channel, inter, ephemeral=False):
     print(text)
-    for ind, each in enumerate(text):
-        if ind % 4 == max_length:
-            final.append(temp)
-            temp = ''
-        print(len(temp), temp)
-        temp += each
-    print(final)
-    return final
-
-
-def increment_page(page, ind):
-    page_length = len(page)
-    if ind + 1 > page_length:
-        return ind + 1
-    return 0
-
-
-def decrement_page(page, index):
-    page_length = len(page)
-    if index - 1 < page_length:
-        return index - 1
-    return page_length
-
-
-index = 0
-
-
-async def paginate(text, inter, ephemeral=False):
-    pages = paginator(text, 4000)
+    pages = textwrap.wrap(text, 4000)
     elements = []
     for each, index in enumerate(pages):
         elements.append(
-            paginator.Element(
+            Element(
                 header=f"Page {index}:",
                 long_desc=each
             )
@@ -130,32 +151,46 @@ async def paginate(text, inter, ephemeral=False):
     # Send a message with buttons
     emb = discord.Embed(
         title="Message content:",
-        description=text
+        description=pages[0]
     )
     msg = await inter.edit(embed=emb, components=button_row)
 
     # Click manager usage
 
     on_click = msg.create_click_listener(timeout=60)
-
     print(len(pages))
-
+    index = 0
     if len(pages) == 0:
         for button in button_row:
             button.disabled = True
         await msg.edit(embed=emb, components=button_row)
 
-    @on_click.matching_id("left")
-    async def down(inter):
-        global index
-        index = decrement_page(pages, index)
-        emb.description = pages[index]
+    def increment_page(page):
+        page_length = len(page)
+        temp = index
+        if index + 1 > page_length:
+            return index + 1
+        return 0
+
+    def decrement_page(page):
+        page_length = len(page)
+        if index - 1 < page_length:
+            return index - 1
+        return page_length
 
     @on_click.matching_id("right")
-    async def up(inter):
-        global index
-        index = increment_page(pages, index)
+    async def down(inter):
+        index = decrement_page(pages)
         emb.description = pages[index]
+        await msg.edit(embed=emb, components=button_row)
+        await inter.reply(type=6)
+
+    @on_click.matching_id("left")
+    async def up(inter):
+        index = increment_page(pages)
+        emb.description = pages[index]
+        await msg.edit(embed=emb, components=button_row)
+        await inter.reply(type=6)
 
     @on_click.timeout
     async def on_timeout():
