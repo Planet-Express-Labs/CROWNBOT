@@ -25,6 +25,7 @@ import wavelink
 from discord.ext import commands
 from dislash import *
 from humanize import naturalsize
+from CROWNBOT.paginate import progress_bar
 
 from bot import guilds
 from cogs.data.music_nodes import nodes
@@ -207,6 +208,10 @@ class Music(commands.Cog):
 
     @commands.Cog.listener()
     async def on_slash_command_error(self, inter, error):
+        if isinstance(error, wavelink.ZeroConnectedNodes):
+            await inter.reply(f"Our network is having trouble connecting. Try again later. We likely are over-allocated"
+                              ".If you're still having issues connecting, please ask for help in our support server."
+                              "This likely isn't an issue on your end. ")
         raise error
 
     @slash_commands.command(name='connect',
@@ -267,10 +272,10 @@ class Music(commands.Cog):
         """Pauses the song."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
         if not player.is_playing:
-            return await ctx.reply('I am not currently playing anything!')
+            return await ctx.send('I am not currently playing anything!')
 
-        await ctx.reply('Pausing the song!')
         await player.set_pause(True)
+        await ctx.reply('Player has been paused')
 
     @slash_commands.command(name="resume",
                             guild_ids=guilds,
@@ -280,10 +285,10 @@ class Music(commands.Cog):
         """Resumes the song if pauced. ."""
         player = self.bot.wavelink.get_player(ctx.guild.id)
         if not player.paused:
-            return await ctx.reply('The song is not currently paused!')
+            return await ctx.send('The song is not currently paused!')
 
-        await ctx.reply('Resumed. ')
         await player.set_pause(False)
+        await ctx.reply('Player has been resumed. ')
 
     @slash_commands.command(name='skip',
                             guild_ids=guilds,
@@ -296,8 +301,8 @@ class Music(commands.Cog):
         if not player.is_playing:
             return await ctx.send("There isn't anything playing!")
 
-        await ctx.send('Skipping...')
         await player.stop()
+        await ctx.reply('Skipping...')
 
     @slash_commands.command(name='volume',
                             aliases=['vol'],
@@ -311,12 +316,83 @@ class Music(commands.Cog):
         """Set the player volume."""
         vol = ctx.get('volume')
         player = self.bot.wavelink.get_player(ctx.guild.id)
+        if not player.is_playing:
+            return await ctx.send('I am not currently playing anything!')
         controller = self.get_controller(ctx)
         if vol is not None:
-            vol = max(min(vol, 1000), 0)
+            vol = max(min(vol, 200), 0)
+            if vol > 100:
+                await ctx.reply(f'Volume levels over 100 might have major distortion and may cause hearing damage.')
             controller.volume = vol
             await ctx.send(f'Setting the cmd_volume to `{vol}`')
             await player.set_volume(vol)
+        else:
+            button_row = auto_rows(
+                Button(
+                    style=ButtonStyle.blurple,
+                    label="vol --",
+                    custom_id="leftleft",
+                    disabled=False
+                ),
+                Button(
+                    style=ButtonStyle.blurple,
+                    label="vol -",
+                    custom_id="left",
+                    disabled=False
+                ),
+                Button(
+                    style=ButtonStyle.blurple,
+                    label="vol +",
+                    custom_id="left",
+                    disabled=False
+                ),
+                Button(
+                    style=ButtonStyle.blurple,
+                    label="vol ++",
+                    custom_id="rightright",
+                    disabled=False
+                ),
+                max_in_row=4
+            )
+            msg = await ctx.reply('Current volume:\n' + await progress_bar(player.volume, 100, length=25), components=button_row)
+
+            # Click manager usage
+
+            on_click = msg.create_click_listener(timeout=60)
+
+            @on_click.matching_id("right")
+            async def down(inter):
+                vol = max(min(player.volume + 5, 1000), 0)
+                player.volume = vol
+                await ctx.edit('Current volume:\n' + await progress_bar(player.volume, 100, length=25))
+                await inter.reply(type=6)
+
+            @on_click.matching_id("rightright")
+            async def down(inter):
+                vol = max(min(player.volume + 10, 100), 0)
+                player.volume = vol
+                await ctx.edit('Current volume:\n' + await progress_bar(player.volume, 100, length=25))
+                await inter.reply(type=6)
+
+            @on_click.matching_id("left")
+            async def up(inter):
+                vol = max(min(player.volume + 5, 100), 0)
+                player.volume = vol
+                await ctx.edit('Current volume:\n' + await progress_bar(player.volume, 100, length=25))
+                await inter.reply(type=6)
+
+            @on_click.matching_id("leftleft")
+            async def up(inter):
+                vol = max(min(player.volume + 10, 100), 0)
+                player.volume = vol
+                await ctx.edit('Current volume:\n' + await progress_bar(player.volume, 100, length=25))
+                await inter.reply(type=6)
+
+            @on_click.timeout
+            async def on_timeout():
+                for button in button_row:
+                    button.disabled = True
+                await msg.edit('Current volume:\n' + await progress_bar(player.volume, 100, length=25), components=button_row)
 
     @slash_commands.command(name='now_playing',
                             aliases=['np', 'current', 'nowplaying'],
@@ -333,7 +409,8 @@ class Music(commands.Cog):
         controller = self.get_controller(ctx)
         await controller.now_playing.delete()
 
-        controller.now_playing = await ctx.send(f'Now playing: `{player.current}`')
+        embed = create_song_embed(player)
+        await ctx.edit(embed=embed)
 
     @slash_commands.command(name="queue",
                             aliases=['q'],
