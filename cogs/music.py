@@ -23,8 +23,9 @@ from typing import Union
 import discord
 import wavelink
 from discord.ext import commands
-from dislash import slash_commands, Option, Type, Interaction
+from dislash import *
 from humanize import naturalsize
+from CROWNBOT.paginate import progress_bar
 
 from bot import guilds
 from cogs.data.music_nodes import nodes
@@ -237,16 +238,6 @@ class Music(commands.Cog):
         await player.set_pause(True)
         await ctx.reply('Player has been paused')
 
-    @slash_commands.command(name='reconnect-nodes',
-                            guild_ids=guilds,
-                            description="Attempts to re-establish connection to nodes."
-                            )
-    async def cmd_pause(self, ctx):
-        """Attempts to re-establish connection to nodes. """
-        if verify.verify_user(ctx, "developer"):
-            await self.start_nodes()
-            await ctx.reply("Attempted reconnection. ")
-
     @slash_commands.command(name="resume",
                             guild_ids=guilds,
                             description="Resumes the song if it is paused."
@@ -288,11 +279,11 @@ class Music(commands.Cog):
         player = self.bot.wavelink.get_player(ctx.guild.id)
         if not player.is_playing:
             return await ctx.send('I am not currently playing anything!')
-        if vol > 200:
-            return await ctx.reply("That's too loud!")
         controller = self.get_controller(ctx)
         if vol is not None:
-            vol = max(min(vol, 1000), 0)
+            vol = max(min(vol, 200), 0)
+            if vol > 100:
+                await ctx.reply(f'Volume levels over 100 might have major distortion and may cause hearing damage.')
             controller.volume = vol
             await ctx.send(f'Setting the cmd_volume to `{vol}`')
             await player.set_volume(vol)
@@ -379,7 +370,8 @@ class Music(commands.Cog):
         controller = self.get_controller(ctx)
         await controller.now_playing.delete()
 
-        controller.now_playing = await ctx.send(f'Now playing: `{player.current}`')
+        embed = create_song_embed(player)
+        await ctx.edit(embed=embed)
 
     @slash_commands.command(name="queue",
                             aliases=['q'],
