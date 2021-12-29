@@ -1,11 +1,32 @@
 ![CROWNBOT-ex-01](https://user-images.githubusercontent.com/45272685/124843493-45b78e80-df4f-11eb-80a0-0e87ec07f260.png)
 
+# Information
+
+CROWNBOT is a discord bot that harnesses bleeding edge AI models to simplify your modertation experience and help retain members with fun features. 
+
+
+### Stay updated on your favorite idols
+We support subscribing to Weverse pages and sending all new posts/comments into a channel. 
+This feature is provided by Mujykun's Weverse API library. 
+
+### AI Driven moderation
+We use advanced AI to assist in moderating your server. 
+Images are run through deep learning networks that can automatically detect innapropriate content. 
+We use advanced NLP models to classify text and find potentially problematic statements or people that might need to be supported. 
+
+* Planet Express Labs assumes no responsiblity in the event of false negative/positive events. 
+* These features are to assist existing moderation, and should not be considered a complete replacement.
+
+
+
 
 # Install
 
 Hosted CROWNBOT is not running on the Azure Ubuntu:latest image. We have a ~~test~~ temporary production environment running on Heroku and our
 deveopers mostly use Windows. There should not be issues with running on different platforms, however we recomend you
 follow our environment as close as possible.
+
+### Docker images will be released at some point in the future. 
 
 Installation is simple.
 
