@@ -20,3 +20,5 @@ cogs/lavalink/logs/spring.log
 cogs/data/music_nodes.py
 gcloud.json
 *.sqlite3
+data/database.db-wal
+data/database.db-shm

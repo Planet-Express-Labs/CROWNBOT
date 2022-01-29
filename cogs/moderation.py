@@ -1,110 +1,25 @@
-# This software is provided free of charge without a warranty.
-# This Source Code Form is subject to the terms of the
-# Mozilla Public License, v. 2.0. If a copy of the MPL was 
-# this file, You can obtain one at https://mozilla.org/MPL/2.0/.
+# Copyright 2021 Planet Express Labs
+# All rights reserved.
+# The only reason for taking full copyright is because of a few bad actors.
+# As long as you are using my code in good faith, we will probably not have an issue with it.
+
 import discord
 from discord.ext import commands
-from discord.ext.commands import Context
-from dislash import slash_commands, Option, Type, Interaction
-
-from CROWNBOT import localization
-from bot import guilds
+from dislash import *
 
 
 class Moderation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx: Context, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(localization.get_string("COMMAND_EMPTY"))
-        elif isinstance(error, commands.MissingPermissions):
-            await ctx.send(localization.get_string("CMD_PERMISSION_ERROR"))
-
-    @slash_commands.has_permissions(manage_messages=True)
     @slash_commands.command(
-        name="embed",
-        description="Creates an embed",
+        description="Gets user info",
         options=[
-            Option("title", "Creates a title", Type.STRING),
-            Option("description", "Creates a description", Type.STRING),
-            Option("color", "Colors the embed", Type.STRING),
-            Option("image_url", "URL of the embed's image", Type.STRING),
-            Option("footer", "Creates a footer", Type.STRING),
-            Option("footer_url", "URL of the footer image", Type.STRING)
-
+            Option("user", "User to get info for.", type=Type.USER, required=True)
         ],
-        guild_ids=guilds)
-    async def cmd_embed(self, ctx: Interaction):
-        title = ctx.get('title')
-        desc = ctx.get('description')
-        color = ctx.get('color')
-        image_url = ctx.get('image_url')
-        footer = ctx.get('footer')
-        footer_url = ctx.get('footer_url')
-        if color is not None:
-            # try:
-            color = await commands.ColorConverter().convert(ctx, color)
-            # except:
-            #     color = discord.Color.default()
-        else:
-            color = discord.Color.default()
-        reply = discord.Embed(color=color)
-        if title is not None:
-            reply.title = title
-        if desc is not None:
-            reply.description = desc
-        if image_url is not None:
-            reply.set_image(url=image_url)
-        pl = {}
-        if footer is not None:
-            pl['text'] = footer
-        if footer_url is not None:
-            pl['icon_url'] = footer_url
-        if len(pl) > 0:
-            reply.set_footer(**pl)
-        await ctx.send(embed=reply)
-
-    @slash_commands.has_permissions(manage_messages=True)
-    @slash_commands.command(name="purge",
-                            description="Deletes many messages at once. Syntax: /purge <messages> <channel>. ",
-                            guild_ids=guilds,
-                            options=[
-                                Option('messages', 'The number of messages to delete.', Type.INTEGER, required=True),
-                                Option('channel', 'The channel to delete the messages in.', Type.CHANNEL)]
-                            )
-    async def cmd_purge(self, interaction):
-        """Deletes Multiple messages from a channel.
-        The syntax is as follows:
-        purge <messages> <channel>.
-        If the channel is none, it will use the current channel.
-        """
-        messages = int(interaction.get("messages"))
-        channel = interaction.get("channel")
-        if channel is None:
-            channel = interaction.channel
-        await channel.purge(limit=messages)
-        await interaction.reply(f"Deleted {messages} messages. ")
-
-    @slash_commands.command(name="avatar",
-                            description="Gets the avatar from the pinged user.",
-                            guild_ids=guilds,
-                            options=[
-                                Option('user', "Who's avatar you want to pull.", Type.USER, required=True)
-                            ])
-    async def cmd_avatar(self, ctx):
-        user = ctx.get('user')
-        embed = discord.Embed(description=f"{user.display_name}'s profile picture:")
-        embed.set_image(url=user.avatar_url)
-        await ctx.reply(embed=embed)
-
-    @slash_commands.command(
-        name="user-info",
-        description="Shows user profile",
-        options=[Option("user", "Which user to inspect", Type.USER)],
-        guild_ids=guilds)
-    async def user_info(self, ctx):
+        name="user-info"
+    )
+    async def user_info(self, ctx, user=None):
         badges = {
             "staff": "<:staff:812692120049156127>",
             "partner": "<:partner:812692120414322688>",
@@ -115,12 +30,12 @@ class Moderation(commands.Cog):
             "hypesquad_balance": "<:balance:812692120270798878>",
             "verified_bot_developer": "<:verified_bot_developer:812692120133042178>"
         }
-        user = ctx.get("user", ctx.author)
+
         badge_string = ' '.join(badges[pf.name] for pf in user.public_flags.all() if pf.name in badges)
         created_at = str(user.created_at)[:-7]
         reply = discord.Embed(color=discord.Color.blurple())
         reply.title = str(user)
-        reply.set_thumbnail(url=user.avatar_url)
+        reply.set_thumbnail(url=user.display_avatar)
         reply.add_field(
             name="Registration",
             value=(
@@ -134,14 +49,102 @@ class Moderation(commands.Cog):
                 name="Badges",
                 value=f"`->` {badge_string}"
             )
-        await ctx.send(embed=reply)
+        await ctx.reply(embed=reply)
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.MissingRequiredArgument):
-            await ctx.send(localization.get_string("COMMAND_EMPTY"))
-        if isinstance(error, slash_commands.MissingPermissions):
-            await ctx.send(localization.get_string("NO_PERMISSION"))
+    @commands.has_permissions(manage_messages=True)
+    @slash_commands.command(
+        name="embed",
+        description="Creates an embed",
+        options=[
+            Option("channel", "Where the message should be sent.", type=Type.CHANNEL),
+            Option("title", "Creates a title", type=Type.STRING),
+            Option("description", "Creates a description", type=Type.STRING),
+            Option("color", "Colors the embed", type=Type.STRING),
+            Option("image_url", "URL of the embed's image", type=Type.STRING),
+            Option("footer", "Creates a footer", type=Type.STRING),
+            Option("footer_url", "URL of the footer image", type=Type.STRING)
+        ]
+    )
+    async def embed(self, ctx, channel=None, title=None, description=None, color=None, image_url=None, footer=None,
+                    footer_url=None):
+        if color is not None:
+            color = await commands.ColorConverter().convert(ctx, color)
+        else:
+            color = discord.Color.default()
+        embed = discord.Embed(color=color)
+        if title is not None:
+            embed.title = title
+        if description is not None:
+            embed.description = description
+        if image_url is not None:
+            embed.set_image(url=image_url)
+        footer_args = {}
+        if footer is not None:
+            footer_args['text'] = footer
+        if footer_url is not None:
+            footer_args['icon_url'] = footer_url
+        if footer_args:
+            embed.set_footer(**footer_args)
+        if channel is None:
+            await ctx.reply(embed=embed)
+        else:
+            await ctx.reply("Sent!")
+            await channel.send(embed=embed)
+
+    @commands.has_permissions(ban_members=True)
+    @slash_commands.command(
+        name="ban",
+        description="Ban user",
+        options=[
+                Option("user", "User to ban", type=Type.USER, required=True),
+                Option("purge", "Number of days to purge messages. ", type=Type.INTEGER),
+                Option("reason", "Reason for the ban", type=Type.STRING)
+                ]
+    )
+    async def ban(self, ctx, user, reason=None, purge=0):
+        try:
+            await ctx.guild.ban(user=user, reason=reason, delete_message_days=purge)
+            await ctx.reply(f"Success! {user.name} has been banned. ")
+        except discord.errors.Forbidden:
+            await ctx.reply(f"I do not have permission to execute this command!")
+
+    @commands.has_permissions(manage_messages=True)
+    @slash_commands.command(
+        name="purge",
+        description="Deletes a lot of messages. How many messages? A lot!",
+        options=[
+            Option("limit", "Number of messages to delete", type=Type.INTEGER, required=True),
+            Option("user", "Who's messages to delete", type=Type.USER),
+            Option("channel", "Channel from which to delete the messages.", type=Type.CHANNEL)
+        ]
+    )
+    async def purge(self, ctx, limit, user=None, channel=None):
+        if channel is None:
+            channel = ctx.channel
+        messages = []
+        if user is None:
+            await channel.purge(limit=limit)
+        else:
+            async for message in channel.history():
+                if len(messages) == limit:
+                    break
+                if message.author == user:
+                    messages.append(message)
+            await channel.delete_messages(messages)
+        await ctx.reply(f"Deleted {limit} messages from {channel.mention}.", ephemeral=True)
+
+    @commands.has_permissions(kick_members=True)
+    @slash_commands.command(
+        name="kick",
+        description="Kick user",
+        options=[Option("user", "User to kick", type=Type.USER)]
+    )
+    async def kick(self, ctx, user):
+        try:
+            await user.kick()
+            await ctx.reply(f"{user.mention} has been kicked successfully.")
+        except discord.errors.Forbidden:
+            await ctx.reply(f"I do not have permission to execute this command!")
 
 
 def setup(bot):

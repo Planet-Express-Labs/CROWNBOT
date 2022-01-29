@@ -52,8 +52,6 @@ async def init():
     # Generate the schema, only run on new
     # if bool(os.getenv("zoidberg_first_run")):
     await Tortoise.generate_schemas()
-# run_async is a helper function to run simple async Tortoise scripts.
-run_async(init())
 
 
 @bot.event

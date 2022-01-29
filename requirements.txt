@@ -19,3 +19,6 @@ google-cloud-vision
 azure-cognitiveservices-vision-contentmoderator
 msrest
 asyncpg
+pillow
+requests_async
+openai

@@ -7,6 +7,7 @@ import codecs
 import configparser
 import logging
 import os
+import openai
 
 log = logging.getLogger(__name__)
 use_env = False
@@ -39,6 +40,14 @@ if not os.path.exists(os.getcwd() + "\\data\\config.ini"):
     HF_API_KEY = os.getenv("zoidberg_huggingface")
     SUBSCRIPTION_KEY = os.getenv('zoidberg_content_moderator_api_key')
     CONTENT_MODERATOR_ENDPOINT = os.getenv("zoidberg_content_moderator_endpoint")
+    AI21_API_KEY = os.getenv("zoidberg_ai21")
+    GREYNOISE_API_KEY = os.getenv("zoidberg_greynoise")
+
+    WEVERSE_API_KEY = os.getenv("zoidberg_weverse")
+    WEVERSE_USERNAME = os.getenv("zoidberg_weverse_username")
+    WEVERSE_PASSWORD = os.getenv("zoidberg_weverse_password")
+    WEVERSE_IMAGE_STORE = os.getenv("zoidberg_weverse_image_store")
+
 else:
     CONFIG_FILE = os.getcwd() + "\\data\\config.ini"
     config = configparser.ConfigParser()
@@ -64,3 +73,14 @@ else:
     HF_API_KEY = config.get("AI", "HuggingFace_api_key")
     SUBSCRIPTION_KEY = config.get("AI", "content_moderator_api_key")
     CONTENT_MODERATOR_ENDPOINT = config.get("AI", "content_moderator_endpoint")
+    AI21_API_KEY = config.get("AI", "ai21_api_key")
+    openai.api_key = config.get("AI", "openai_api_key")
+
+    # API section
+    GOOGLE_API_KEY = config.get("API", "google_api_key")
+    GREYNOISE_API_KEY = config.get("API", "greynoise_api_key")
+    WEVERSE_API_KEY = config.get("API", "weverse_api_key")
+    WEVERSE_USERNAME = config.get("API", "weverse_username")
+    WEVERSE_PASSWORD = config.get("API", "weverse_password")
+    WEVERSE_IMAGE_STORE = config.get("API", "weverse_image_store")
+
